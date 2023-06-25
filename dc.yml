@@ -1,6 +1,6 @@
 - name: docker-compouse
   become: true
-  hosts: servers
+  hosts: nodes
   tasks:
   - name: install dependencies
     apt:
@@ -58,15 +58,42 @@
       path: /usr/local/bin/docker-compose
       owner: test
       group: test
-  - name: Template file prometeus
-    ansible.builtin.template:
-      src: /home/paromov/ansible_terr_dkr/conf/prometheus.yml
-      dest: /home/test/prometheus.yml
-  - name: Template file prometeus
-    ansible.builtin.template:
-      src: /home/paromov/ansible_terr_dkr/compose.yml
-      dest: /home/test/compose.yml
-  - name: start docker-compose playbook
-    shell: docker-compose up -d
 
-  
+- name: configure
+  hosts: nodes
+  become: true
+  roles:
+    - configure-hosts-file
+
+- name: Initialize Docker Swarm Cluster
+  hosts: active
+  become: true
+  roles:
+    - docker-swarm-init
+
+- name: Add Managers Swarm Cluster
+  hosts: standby
+  become: true
+  roles:
+    - docker-swarm-add-manager
+
+- name: Add Workers to the Swarm Cluster
+  hosts: workers
+  become: true
+  roles:
+    - docker-swarm-add-worker
+
+- name: swarm-deploy-stack
+  hosts: nodes
+  become: true
+  tasks:
+    - name: Check Current Leader
+      shell: docker node ls | grep {{ ansible_hostname }}
+      register: docker_info
+      changed_when: false
+
+    - name: Run deploy, if node is leader
+      shell: docker stack deploy --compose-file /opt/monitoring/docker-compose.yml swarm_monitoring
+      when:
+        - "'Leader' in docker_info.stdout"
+        - "'Active' in docker_info.stdout"
