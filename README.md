@@ -24,6 +24,7 @@
 ```
 docker node ls
 ```
+![](https://github.com/Romera14/05-virt-05-docker-swarm/blob/main/node%20ls.png)
 
 ## Задача 3
 
@@ -33,6 +34,7 @@ docker node ls
 ```
 docker service ls
 ```
+![](https://github.com/Romera14/05-virt-05-docker-swarm/blob/main/service%20ls.png)
 
 ## Задача 4 (*)
 
