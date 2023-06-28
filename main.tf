@@ -95,16 +95,16 @@ resource "local_file" "inventory" {
     standby
 
     [active]
-    manager_node0=${yandex_compute_instance.manager[0].network_interface.0.nat_ip_address}
+    node01.netology.yc ansible_host=${yandex_compute_instance.manager[0].network_interface.0.nat_ip_address}
 
     [standby]
-    manager_node1=${yandex_compute_instance.manager[1].network_interface.0.nat_ip_address}
-    manager_node2=${yandex_compute_instance.manager[2].network_interface.0.nat_ip_address}
+    node02.netology.yc ansible_host=${yandex_compute_instance.manager[1].network_interface.0.nat_ip_address}
+    node03.netology.yc ansible_host=${yandex_compute_instance.manager[2].network_interface.0.nat_ip_address}
 
     [workers]
-    worker_node0=${yandex_compute_instance.work[0].network_interface.0.nat_ip_address}
-    worker_node1=${yandex_compute_instance.work[1].network_interface.0.nat_ip_address}
-    worker_node2=${yandex_compute_instance.work[2].network_interface.0.nat_ip_address}
+    node04.netology.yc ansible_host=${yandex_compute_instance.work[0].network_interface.0.nat_ip_address}
+    node05.netology.yc ansible_host=${yandex_compute_instance.work[1].network_interface.0.nat_ip_address}
+    node06.netology.yc ansible_host=${yandex_compute_instance.work[2].network_interface.0.nat_ip_address}
     DOC
   filename = "/home/paromov/05-virt-05-docker-swarm/inventory"
 
@@ -131,3 +131,4 @@ output "internal_ip_address_work" {
 output "external_ip_address_work" {
   value = yandex_compute_instance.work[*].network_interface.0.nat_ip_address
 }
+
