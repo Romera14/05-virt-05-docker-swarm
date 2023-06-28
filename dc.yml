@@ -83,6 +83,20 @@
   roles:
     - docker-swarm-add-worker
 
+- name: swarm-deploy-sync
+  hosts: nodes
+  become: true
+
+  tasks:
+    - name: Synchronization
+      copy:
+        src: monitoring/
+        dest: "/opt/monitoring/"
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+
 - name: swarm-deploy-stack
   hosts: nodes
   become: true
